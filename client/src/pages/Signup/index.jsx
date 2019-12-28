@@ -1,96 +1,158 @@
-import React, { Component } from "react";
-import { Button, Modal } from 'react-bootstrap';
+import React from 'react';
+import { Button, Col, Form, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { Formik } from 'formik';
+import * as yup from 'yup';
 
-/* We want to import our 'AuthHelperMethods' component in order to send a login request */
 import AuthHelperMethods from '../../utils/Authentication';
+import API from '../../utils/API'
 
 
-export default class Signup extends Component {
+const schema = yup.object({
+    firstName: yup.string().required(),
+    lastName: yup.string().required(),
+    email: yup.string().required(),
+    password: yup.string().required()
+  });
 
-    /* In order to utilize our authentication methods within the AuthService class, we want to instantiate a new object */
-    Auth = new AuthHelperMethods();
+const Auth = new AuthHelperMethods();
 
-    state = {
-        firstName: '',
-        lastName: '',
-        email: "",
-        password: ""
-    }
+  
 
-    /* Fired off every time the use enters something into the input fields */
-    _handleChange = (e) => {
-        this.setState(
-            {
-                [e.target.name]: e.target.value
-            }
-        )
-    }
+/*
 
-    handleFormSubmit = (e) => {
-
-        e.preventDefault();
-        /* Here is where all the login logic will go. Upon clicking the login button, 
-        we would like to utilize a login method that will send our entered credentials over to the server for verification. 
-        Once verified, it should store your token and send you to the protected route. */
-        this.Auth.login(this.state)
-            .then(res => {
-                if (res === false) {
-                    return alert("Sorry signup failed!");
-                }
-                this.props.history.replace('/');
-            })
-            .catch(err => {
-                alert(err);
-            })
-    }
-
+need to add this hook style
     componentWillMount() {
-        /* Here is a great place to redirect someone who is already logged in to the protected route */
+         //redirect someone who is already logged in to the protected route
         if (this.Auth.loggedIn())
             this.props.history.replace('/');
     }
 
-    render() {
-        return (
-            <Modal
-                show={true}
-                onHide={() => this.props.history.replace('/')}
-                animation={false}
-                size="lg"
-                aria-labelledby="login-form"
-                centered
+*/
+const Signup = (props) => (
+    <Modal
+        show={true}
+        onHide={() => props.history.replace('/')}
+        animation={false}
+        size="lg"
+        aria-labelledby="login-form"
+        centered
+    >
+        <Modal.Header closeButton>
+            <Modal.Title id="login-form">
+                Reading List Signup
+        </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <h5 className="card-title">Signup to create your reading list</h5>
+            <Formik
+                initialValues={{ firstName: '', lastName: '', email: '', password: '' }}
+                validationSchema={schema}
+                onSubmit={async (values, { setSubmitting }) => {
+                    try {
+                        const data = await API.signup(values);
+                        if (data.success) {
+                            setSubmitting(false);
+                            Auth.setToken(data.jwt);
+                            props.history.replace('/');
+                        }
+                    } catch (error) {
+                        setSubmitting(false);
+                        console.log(error);
+            
+                    }
+                }}
             >
-                <Modal.Header closeButton>
-                    <Modal.Title id="login-form">
-                        Reading List Signup
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <h5 className="card-title">Signup to create your reading list</h5>
-                    <form onSubmit={this.handleFormSubmit}>
-                        <div className="form-group">
-                            <label htmlFor="exampleInputEmail1">First name</label>
-                            <input name='firstName' type="text" className="form-control form-control-lg" />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="exampleInputEmail1">Last name</label>
-                            <input name='lastName' type="text" className="form-control form-control-lg" />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="exampleInputEmail1">Email address</label>
-                            <input name='email' type="email" className="form-control form-control-lg" />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="exampleInputPassword1">Password</label>
-                            <input name='password' type="password" className="form-control form-control-lg" />
-                        </div>
-                        <Button type="submit" className="btn btn-primary">Submit</Button>
-                    </form>
-                    <Link className="link" to="/login">Already have an account? <span className="link-signup">Login</span></Link>
-                </Modal.Body>
-            </Modal>
-        );
-    }
+                {({
+                    values,
+                    errors,
+                    touched,
+                    handleChange,
+                    handleBlur,
+                    handleSubmit,
+                    isSubmitting,
+                    /* and other goodies */
+                }) => (
+                        <Form noValidate onSubmit={handleSubmit}>
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="signupFirstName">
+                                <Form.Label>First name</Form.Label>
+                                <Form.Control
+                                    required
+                                    name='firstName'
+                                    type="text"
+                                    placeholder="First name"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.firstName}
+                                    isInvalid={!!errors.firstName}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                {errors.firstName && touched.firstName && errors.firstName}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Form.Row>
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="signupLastName">
+                                <Form.Label>Last name</Form.Label>
+                                <Form.Control
+                                    required
+                                    name='lastName'
+                                    type="text"
+                                    placeholder="Last name"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.lastName}
+                                    isInvalid={!!errors.lastName}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                {errors.lastName && touched.lastName && errors.lastName}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Form.Row>
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="signupEmail">
+                                <Form.Label>Email address</Form.Label>
+                                <Form.Control
+                                    required
+                                    name='email'
+                                    type="email"
+                                    placeholder="Email address"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.email}
+                                    isInvalid={!!errors.email}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                {errors.email && touched.email && errors.email}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Form.Row>
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="Password">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control
+                                    required
+                                    name='password'
+                                    type="password"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.password}
+                                    isInvalid={!!errors.password}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                {errors.password && touched.password && errors.password}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Form.Row>
+                        <Button type="submit" className="btn btn-primary" disabled={isSubmitting}>Submit</Button>
+                    </Form>
+                    )}
+            </Formik>
+            <Link className="link" to="/login">Already have an account? <span className="link-signup">Login</span></Link>
+        </Modal.Body>
+    </Modal>
 
-}
+);
+
+export default Signup;

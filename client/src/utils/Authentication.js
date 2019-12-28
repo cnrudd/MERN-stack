@@ -7,7 +7,7 @@ export default class AuthHelperMethods {
     signup = ({email, password, firstName, lastName}) => {
         
         // Get a token from api server using the fetch api
-        return this.fetch(`/signup`, {
+        return this.fetch(`/api/auth/signup`, {
             method: 'POST',
             body: JSON.stringify({
                 email,
@@ -25,7 +25,7 @@ export default class AuthHelperMethods {
     login = ({email, password}) => {
         
         // Get a token from api server using the fetch api
-        return this.fetch(`/log-in`, {
+        return this.fetch(`/api/auth/login`, {
             method: 'POST',
             body: JSON.stringify({
                 email,
