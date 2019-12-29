@@ -21,8 +21,8 @@ export default function App() {
           <PublicRoute exact path="/" component={Splash} />
           <PublicRoute path="/login" component={Login} />
           <PublicRoute path="/signup" component={Signup} />
-          <PrivateRoute path="/books"><Books /></PrivateRoute>
-          <PrivateRoute path="/books/:id"><Detail /></PrivateRoute>
+          <PrivateRoute exact path="/books" component={Books} />
+          <PrivateRoute path="/books/:id" component={Detail} />
           <Route path="*"><NoMatch /></Route>
         </Switch>
       </div>
@@ -33,19 +33,19 @@ export default function App() {
 
 // A wrapper for <Route> that redirects to the login
 // screen if you're not yet authenticated.
-function PrivateRoute({ children, ...rest }) {
+function PrivateRoute({ component: Component, ...rest }) {
 
   return (
     <Route
       {...rest}
-      render={({ location }) =>
+      render={routeProps =>
         isLoggedIn() ? (
-          children
+          <Component {...routeProps} />
         ) : (
             <Redirect
               to={{
                 pathname: "/login",
-                state: { from: location }
+                state: { from: routeProps.location }
               }}
             />
           )
