@@ -2,9 +2,9 @@ const db = require("../models");
 
 // Defining methods for the booksController
 module.exports = {
-  findAll: function(req, res) {
+  findAll: function(req, res) {    
     db.Book
-      .find(req.query)
+      .find({user: req.user._id})
       .sort({ date: -1 })
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
@@ -16,6 +16,7 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
   create: function(req, res) {
+    req.body.user = req.user._id;
     db.Book
       .create(req.body)
       .then(dbModel => res.json(dbModel))
