@@ -54,6 +54,8 @@ function PrivateRoute({ children, ...rest }) {
   );
 }
 
+// A wrapper for <Route> that redirects to the books 
+// screen if you're authenticated.
 function PublicRoute({ component: Component, ...rest }) {
 
   return (

@@ -1,13 +1,20 @@
 import React from "react";
+import { Button, Navbar } from 'react-bootstrap';
+import { Link } from "react-router-dom";
 
-function Nav() {
-  return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-      <a className="navbar-brand" href="/">
-        React Reading List
-      </a>
-    </nav>
-  );
-}
+import { isLoggedIn, logOut } from '../../utils/Authentication'
+
+const Nav = () => (
+  <Navbar className='navbar-expand-lg navbar-dark bg-primary justify-content-between'>
+    <Navbar.Brand href="/">React Reading List</Navbar.Brand>
+    {
+      isLoggedIn() ?
+        <Button onClick={logOut} >Logout</Button> :
+        <Link to={"/login"}>
+          <Button>Login</Button>
+        </Link>
+    }
+  </Navbar>
+);
 
 export default Nav;

@@ -7,6 +7,14 @@ export function isLoggedIn() {
     return jwt && jwt.valid();
 }
 
+export function logOut() {
+    const jwt = new JotBrowser('jwt');
+    if (jwt) {
+        jwt.eject();
+        window.location = '/'
+    }
+}
+
 export class AuthHelperMethods {
     
     // Initializing important variables
