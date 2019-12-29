@@ -9,13 +9,21 @@ const db = require("../models");
 mongoose.connect(
   process.env.MONGODB_URI || "mongodb://localhost/reactreadinglist"
 );
-const demoUserSeed = {
-  role: "user",
-  firstName: "COLIN",
-  lastName: "RUDD",
-  email: "default@email.com",
-  password: '12345678'
-}
+
+const demoUserSeed = [
+  {
+    role: "user",
+    firstName: "Demo",
+    lastName: "One",
+    email: "demo1@email.com"
+  },
+  {
+    role: "user",
+    firstName: "Demo",
+    lastName: "Two",
+    email: "demo2@email.com"
+  }
+]
 
 
 const bookSeed = [
@@ -138,13 +146,19 @@ async function seed() {
     // clear DB
     await db.Book.remove({});
     await db.User.remove({});
+    
+    // add demo users
+    const saltRounds = parseInt(process.env.PASSWORD_SALT_ROUNDS, 10);
+    const password = process.env.SEED_USER_PASSWORD;
+    await Promise.all(demoUserSeed.map(async (it) => {
+      it.passwordHash = await bcrypt.hash(password, saltRounds);
+      return;
+    }));
 
-    // add demo user
-    demoUserSeed.passwordHash = await bcrypt.hash(demoUserSeed.password, parseInt(process.env.PASSWORD_SALT_ROUNDS, 10));
-    const user = await db.User.create(demoUserSeed);
-
+    const userSeedOp = await db.User.collection.insertMany(demoUserSeed);
+    
     // put demoUser's ID on each book
-    bookSeed.forEach(it => it.user = user._id);
+    bookSeed.forEach((it, idx) => it.user = userSeedOp.insertedIds[idx % 2]);
 
     // add demo books to DB
     const bookSeedOp = await db.Book.collection.insertMany(bookSeed);
