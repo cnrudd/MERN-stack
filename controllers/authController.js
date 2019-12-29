@@ -5,10 +5,9 @@ var bcrypt = require('bcryptjs');
 // Defining methods for the authController
 module.exports = {
   signup: async function (req, res) {
-    const saltRounds = 10;
 
     try {
-      req.body.passwordHash = await bcrypt.hash(req.body.password, saltRounds);
+      req.body.passwordHash = await bcrypt.hash(req.body.password, parseInt(process.env.PASSWORD_SALT_ROUNDS, 10));
       const newUser = await db.User.create(req.body);
       res.json({
         success: true,

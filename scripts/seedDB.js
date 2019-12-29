@@ -1,12 +1,22 @@
+require('dotenv').config();
 const mongoose = require("mongoose");
+var bcrypt = require('bcryptjs');
+
 const db = require("../models");
 
 // This file empties the Books collection and inserts the books below
 
 mongoose.connect(
-  process.env.MONGODB_URI ||
-  "mongodb://localhost/reactreadinglist"
+  process.env.MONGODB_URI || "mongodb://localhost/reactreadinglist"
 );
+const demoUserSeed = {
+  role: "user",
+  firstName: "COLIN",
+  lastName: "RUDD",
+  email: "default@email.com",
+  password: '12345678'
+}
+
 
 const bookSeed = [
   {
@@ -123,14 +133,29 @@ const bookSeed = [
   }
 ];
 
-db.Book
-  .remove({})
-  .then(() => db.Book.collection.insertMany(bookSeed))
-  .then(data => {
-    console.log(data.result.n + " records inserted!");
+async function seed() {
+  try {
+    // clear DB
+    await db.Book.remove({});
+    await db.User.remove({});
+
+    // add demo user
+    demoUserSeed.passwordHash = await bcrypt.hash(demoUserSeed.password, parseInt(process.env.PASSWORD_SALT_ROUNDS, 10));
+    const user = await db.User.create(demoUserSeed);
+
+    // put demoUser's ID on each book
+    bookSeed.forEach(it => it.user = user._id);
+
+    // add demo books to DB
+    const bookSeedOp = await db.Book.collection.insertMany(bookSeed);
+    console.log(`Inserted ${bookSeedOp.result.n} books.`);
+
     process.exit(0);
-  })
-  .catch(err => {
-    console.error(err);
+
+  } catch (error) {
+    console.error(error);
     process.exit(1);
-  });
+  }
+}
+
+seed();
