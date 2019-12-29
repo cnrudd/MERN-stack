@@ -1,6 +1,13 @@
 import decode from 'jwt-decode';
 
-export default class AuthHelperMethods {
+import { Browser as JotBrowser } from 'jwt-jot'
+
+export function isLoggedIn() {
+    const jwt = new JotBrowser('jwt');
+    return jwt && jwt.valid();
+}
+
+export class AuthHelperMethods {
     
     // Initializing important variables
 

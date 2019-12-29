@@ -1,7 +1,6 @@
 import React from "react";
 
 import { Button, Col, Row, Container, Jumbotron } from 'react-bootstrap';
-import { PromiseProvider } from "mongoose";
 
 export default function Splash(props) {
     return (
@@ -16,14 +15,14 @@ export default function Splash(props) {
                             <Button 
                             type="submit" 
                             className="btn btn-primary" 
-                            onClick={() => props.history.replace('/signup')}
+                            onClick={() => props.history.push('/signup')}
                             >Signup</Button>
                         </Col>
                         <Col >
                             <Button 
                             type="submit" 
                             className="btn btn-primary"
-                            onClick={() => props.history.replace('/login')}
+                            onClick={() => props.history.push('/login')}
                             >Login</Button>
                         </Col>
                     </Row>

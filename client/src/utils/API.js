@@ -23,6 +23,6 @@ export default {
   },
 
   login: function(credentials) {
-    return axios.post("/api/auth/login", credentials);
+    return axios.post("/api/auth/login", credentials).then(res => res.data);
   },
 };
