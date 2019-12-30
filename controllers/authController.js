@@ -23,9 +23,9 @@ module.exports = {
     try {
       const user = await db.User.findOne({ email: req.body.email });
       if (!user) {
-        res.status(401).json({
+        res.status(200).json({
           success: false,
-          error: 'User not found'
+          errors: {email: 'User not found'}
         });
         return;
       }
@@ -38,9 +38,9 @@ module.exports = {
           jwt: makeJWT(user)
         })
       } else {
-        res.status(401).json({
+        res.status(200).json({
           sucess: false,
-          err: 'Password is not valid'
+          errors: {password: 'Password is not valid'}
         });
       }
 
@@ -54,7 +54,7 @@ module.exports = {
 function respondWithServerError(res, error) {
   res.status(500).json({
     success: false,
-    error: { name: error.name, msg: error.message }
+    error: { name: error.name, message: error.message }
   });
 }
 

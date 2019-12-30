@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { Browser as JotBrowser } from 'jwt-jot'
 
 import API from '../../utils/API'
-import {isLoggedIn} from '../../utils/Authentication'
+import {ServerError} from '../../components/Form';
 
 const schema = yup.object({
     email: yup.string().required().email(),
@@ -33,22 +33,23 @@ const Login = (props) => {
             <Formik
                 initialValues={{ email: '', password: '' }}
                 validationSchema={schema}
-                onSubmit={async (values, { setSubmitting }) => {
+                onSubmit={async (values, formikBag) => {
                     try {
                         const data = await API.login(values);
                         if (data.success) {
-                            setSubmitting(false);
                             new JotBrowser('jwt', data.jwt);
                             props.history.replace('/books');
+                        } else {
+                            formikBag.setErrors(data.errors);
                         }
-                    } catch (error) {
-                        setSubmitting(false);
-                        console.log(error);
-
+                    } catch (err) {
+                        formikBag.setStatus(err);
                     }
+                    return;
                 }}
             >
                 {({
+                    status,
                     values,
                     errors,
                     touched,
@@ -59,6 +60,7 @@ const Login = (props) => {
                     /* and other goodies */
                 }) => (
                         <Form noValidate onSubmit={handleSubmit}>
+                            <ServerError axiosError={status} />
                             <Form.Row>
                                 <Form.Group as={Col} controlId="signupEmail">
                                     <Form.Label>Email address</Form.Label>
@@ -81,6 +83,7 @@ const Login = (props) => {
                                 <Form.Group as={Col} controlId="Password">
                                     <Form.Label>Password</Form.Label>
                                     <Form.Control
+                                        autoComplete='current-password'
                                         required
                                         name='password'
                                         type="password"
