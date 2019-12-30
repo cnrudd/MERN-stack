@@ -71,6 +71,7 @@ const Signup = (props) => {
                                     <Form.Label>First name</Form.Label>
                                     <Form.Control
                                         required
+                                        autoComplete='given-name'
                                         name='firstName'
                                         type="text"
                                         placeholder="First name"
@@ -89,6 +90,7 @@ const Signup = (props) => {
                                     <Form.Label>Last name</Form.Label>
                                     <Form.Control
                                         required
+                                        autoComplete='family-name'
                                         name='lastName'
                                         type="text"
                                         placeholder="Last name"
@@ -107,6 +109,7 @@ const Signup = (props) => {
                                     <Form.Label>Email address</Form.Label>
                                     <Form.Control
                                         required
+                                        autoComplete='email'
                                         name='email'
                                         type="email"
                                         placeholder="Email address"
@@ -143,6 +146,7 @@ const Signup = (props) => {
                                     <Form.Label>Password</Form.Label>
                                     <Form.Control
                                         required
+                                        autoComplete='new-password'
                                         name='password'
                                         type="password"
                                         onChange={handleChange}
