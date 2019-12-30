@@ -6,12 +6,14 @@ import * as yup from 'yup';
 import { Browser as JotBrowser } from 'jwt-jot'
 
 import API from '../../utils/API'
-import {isLoggedIn} from '../../utils/Authentication'
+import {ServerError} from '../../components/Form';
+
 
 const schema = yup.object({
     firstName: yup.string().required(),
     lastName: yup.string().required(),
     email: yup.string().required().email(),
+    username: yup.string().required().min(3),
     password: yup.string().required().min(8)
 });
 
@@ -33,24 +35,25 @@ const Signup = (props) => {
         <Modal.Body>
             <h5 className="card-title">Signup to create your reading list</h5>
             <Formik
-                initialValues={{ firstName: '', lastName: '', email: '', password: '' }}
+                initialValues={{ firstName: '', lastName: '', email: '', username:'', password: '' }}
                 validationSchema={schema}
-                onSubmit={async (values, { setSubmitting }) => {
+                onSubmit={async (values, formikBag) => {
                     try {
                         const data = await API.signup(values);
                         if (data.success) {
-                            setSubmitting(false);
                             new JotBrowser('jwt', data.jwt);
                             props.history.replace('/books');
+                        } else {
+                            formikBag.setErrors(data.errors);
                         }
-                    } catch (error) {
-                        setSubmitting(false);
-                        console.log(error);
-
+                    } catch (err) {
+                        formikBag.setStatus(err);
                     }
+                    return;
                 }}
             >
                 {({
+                    status,
                     values,
                     errors,
                     touched,
@@ -61,6 +64,8 @@ const Signup = (props) => {
                     /* and other goodies */
                 }) => (
                         <Form noValidate onSubmit={handleSubmit}>
+                                                        <ServerError axiosError={status} />
+
                             <Form.Row>
                                 <Form.Group as={Col} controlId="signupFirstName">
                                     <Form.Label>First name</Form.Label>
@@ -112,6 +117,24 @@ const Signup = (props) => {
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         {errors.email && touched.email && errors.email}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                            </Form.Row>
+                            <Form.Row>
+                                <Form.Group as={Col} controlId="username">
+                                    <Form.Label>Username</Form.Label>
+                                    <Form.Control
+                                        required
+                                        name='username'
+                                        autoComplete='username'
+                                        placeholder="Username"
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        value={values.username}
+                                        isInvalid={!!errors.username}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.username && touched.username && errors.username}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                             </Form.Row>

@@ -9,7 +9,7 @@ import API from '../../utils/API'
 import {ServerError} from '../../components/Form';
 
 const schema = yup.object({
-    email: yup.string().required().email(),
+    username: yup.string().required(),
     password: yup.string().required()
 });
 
@@ -31,7 +31,7 @@ const Login = (props) => {
         <Modal.Body>
             <h5 className="card-title">Login to your reading list</h5>
             <Formik
-                initialValues={{ email: '', password: '' }}
+                initialValues={{ username: '', password: '' }}
                 validationSchema={schema}
                 onSubmit={async (values, formikBag) => {
                     try {
@@ -62,20 +62,20 @@ const Login = (props) => {
                         <Form noValidate onSubmit={handleSubmit}>
                             <ServerError axiosError={status} />
                             <Form.Row>
-                                <Form.Group as={Col} controlId="signupEmail">
-                                    <Form.Label>Email address</Form.Label>
+                                <Form.Group as={Col} controlId="username">
+                                    <Form.Label>Username</Form.Label>
                                     <Form.Control
                                         required
-                                        name='email'
-                                        type="email"
-                                        placeholder="Email address"
+                                        name='username'
+                                        autoComplete='username'
+                                        placeholder="Username"
                                         onChange={handleChange}
                                         onBlur={handleBlur}
-                                        value={values.email}
-                                        isInvalid={!!errors.email}
+                                        value={values.username}
+                                        isInvalid={!!errors.username}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {errors.email && touched.email && errors.email}
+                                        {errors.username && touched.username && errors.username}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                             </Form.Row>

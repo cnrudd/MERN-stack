@@ -15,13 +15,15 @@ const demoUserSeed = [
     role: "user",
     firstName: "Demo",
     lastName: "One",
-    email: "demo1@email.com"
+    email: "demo1@email.com",
+    username: 'demo1'
   },
   {
     role: "user",
     firstName: "Demo",
     lastName: "Two",
-    email: "demo2@email.com"
+    email: "demo2@email.com",
+    username: 'demo2'
   }
 ]
 

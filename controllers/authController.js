@@ -21,11 +21,11 @@ module.exports = {
 
   login: async function (req, res) {
     try {
-      const user = await db.User.findOne({ email: req.body.email });
+      const user = await db.User.findOne({ username: req.body.username });
       if (!user) {
         res.status(200).json({
           success: false,
-          errors: {email: 'User not found'}
+          errors: {username: 'User not found'}
         });
         return;
       }
