@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { Button, Col, Form, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Formik } from 'formik';
@@ -17,6 +17,13 @@ const schema = yup.object({
     password: yup.string().required().min(8)
 });
 
+/**
+ * 
+ * @param {*} props 
+ * 
+ * autocomplete names
+ * https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#attr-fe-autocomplete-given-name
+ */
 const Signup = (props) => {
 
     return <Modal

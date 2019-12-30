@@ -1,5 +1,3 @@
-import decode from 'jwt-decode';
-
 import { Browser as JotBrowser } from 'jwt-jot'
 
 export function isLoggedIn() {
