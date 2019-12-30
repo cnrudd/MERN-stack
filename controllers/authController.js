@@ -7,6 +7,24 @@ module.exports = {
   signup: async function (req, res) {
 
     try {
+      let preExistingUser = await db.User.findOne({ username: req.body.username });
+      if (preExistingUser) {
+        res.status(200).json({
+          success: false,
+          errors: {username: 'Username already exists'}
+        });
+        return;
+      }
+      
+      preExistingUser = await db.User.findOne({ email: req.body.email });
+      if (preExistingUser) {
+        res.status(200).json({
+          success: false,
+          errors: {email: 'Email already exists'}
+        });
+        return;
+      }
+
       req.body.passwordHash = await bcrypt.hash(req.body.password, parseInt(process.env.PASSWORD_SALT_ROUNDS, 10));
       const newUser = await db.User.create(req.body);
       res.json({
