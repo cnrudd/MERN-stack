@@ -32,14 +32,22 @@ export function ServerError(props) {
 
   if (!axiosError || !axiosError.response) return null;
 
-  const {statusText, status} = axiosError.response,
-    {name, message} = axiosError.response.data.error;
+  const {statusText, status} = axiosError.response;
+  let errorObj;
+
+  if (axiosError.response.data.error) {
+    // handle custom error sent back by server
+    errorObj = axiosError.response.data.error;
+  } else {
+    errorObj = axiosError;
+  }
+
 
   return (
 <Alert variant='danger'>
     {status} {statusText}<br />
-    Error Name: {name}<br />
-    Error Message: {message}
+    Error Name: {errorObj.name}<br />
+    Error Message: {errorObj.message}
   </Alert>
   );
 }

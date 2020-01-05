@@ -1,12 +1,13 @@
 import React from 'react';
+import { connect } from 'react-redux'
 import { Button, Col, Form, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { Browser as JotBrowser } from 'jwt-jot'
 
+import { onLogin } from '../../redux/actions'
 import API from '../../utils/API'
-import {ServerError} from '../../components/Form';
+import { ServerError } from '../../components/Form';
 
 const schema = yup.object({
     username: yup.string().required(),
@@ -37,8 +38,7 @@ const Login = (props) => {
                     try {
                         const data = await API.login(values);
                         if (data.success) {
-                            new JotBrowser('jwt', data.jwt);
-                            props.history.replace('/books');
+                            props.onLogin(data.jwt);
                         } else {
                             formikBag.setErrors(data.errors);
                         }
@@ -107,4 +107,10 @@ const Login = (props) => {
 
 };
 
-export default Login;
+export default connect(
+    // mapStateToProps
+    null,
+    // mapDispatchToProps
+    { onLogin }
+)(Login);
+
