@@ -13,13 +13,30 @@ The app currently supports:
 * Login
 * Logout
 * Auto log out if refresh token is expired when request to protected URL is made
-* Auto creation of new auth token if refresh token is still valid
+* Auto creation of new auth token if refresh token is still valid (so if a user is using the app they will not be logged out if they have not made a protected api call within `AUTH_TOKEN_DURATION`)
 
 Missing from app:
 * Auto logout due to inactivity
 * Profile page with Change password screen
 * Profile page with Change username screen
 * Profile Picture/avatar upload
+* Delete account page
+
+
+App can be run locally by running (from project root directory):
+
+```
+npm i
+npm start
+```
+
+or can be used on heroku at:
+https://booklist-cnr.herokuapp.com/
+
+Signup with your own account on the sign up page: https://booklist-cnr.herokuapp.com/signup
+or login with username: demo1   password: 12345678
+
+
 
 
 ## Dependency Doc Links
