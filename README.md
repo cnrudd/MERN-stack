@@ -8,6 +8,19 @@ The server and GUI are coded to authenticate users with username and password.
 
 Authentication info is stored in a JSON Web Token.  The server is session free.
 
+The app currently supports:
+* New User sign up with a username and password
+* Login
+* Logout
+* Auto log out if refresh token is expired when request to protected URL is made
+* Auto creation of new auth token if refresh token is still valid
+
+Missing from app:
+* Auto logout due to inactivity
+* Profile page with Change password screen
+* Profile page with Change username screen
+* Profile Picture/avatar upload
+
 
 ## Dependency Doc Links
 
@@ -21,11 +34,14 @@ Authentication info is stored in a JSON Web Token.  The server is session free.
   * https://getbootstrap.com/
 * Forms
   * https://jaredpalmer.com/formik/
-  * https://www.npmjs.com/package/yup
+  * Validation: https://www.npmjs.com/package/yup
 * JWT (JSON Web Token) handling
-  * https://github.com/eezing/jwt-jot
-  * https://www.npmjs.com/package/jwt-jot
-  * https://jwt.io/
+  * Client
+    * https://github.com/eezing/jwt-jot
+    * https://www.npmjs.com/package/jwt-jot
+  * Server
+    * jsonwebtoken: https://github.com/auth0/node-jsonwebtoken#readme
+  * JWT testing: https://jwt.io/
 * AJAX
   * https://www.npmjs.com/package/axios
 * Routing
