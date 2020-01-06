@@ -6,7 +6,7 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 
 import { onLogin } from '../../redux/actions'
-import API from '../../utils/API'
+import API from '../../api'
 import {ServerError} from '../../components/Form';
 
 
