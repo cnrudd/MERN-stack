@@ -37,7 +37,11 @@ Signup with your own account on the sign up page: https://booklist-cnr.herokuapp
 or login with username: demo1   password: 12345678
 
 
+When running locally, user and book data can be seeded by running:
 
+```
+npm run seed
+```
 
 ## Dependency Doc Links
 
