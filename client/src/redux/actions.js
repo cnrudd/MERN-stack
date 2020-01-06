@@ -9,11 +9,9 @@ import { LOGIN, LOGOUT } from "./actionTypes";
 
  // Fill in the properties that need to be returned
  // in each action
-export const onLogin = (jwt) => ({
+export const onLogin = (tokens) => ({
     type: LOGIN,
-    payload: {
-        jwt
-    }
+    payload: {tokens}
 });
 
 export const onLogout = () => ({

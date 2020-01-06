@@ -38,7 +38,7 @@ const Login = (props) => {
                     try {
                         const data = await API.login(values);
                         if (data.success) {
-                            props.onLogin(data.jwt);
+                            props.onLogin(data.tokens);
                         } else {
                             formikBag.setErrors(data.errors);
                         }

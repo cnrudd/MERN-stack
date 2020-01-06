@@ -1,10 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux'
 import { Button, Col, Form, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { Browser as JotBrowser } from 'jwt-jot'
 
+import { onLogin } from '../../redux/actions'
 import API from '../../utils/API'
 import {ServerError} from '../../components/Form';
 
@@ -48,8 +49,7 @@ const Signup = (props) => {
                     try {
                         const data = await API.signup(values);
                         if (data.success) {
-                            new JotBrowser('jwt', data.jwt);
-                            props.history.replace('/books');
+                            props.onLogin(data.tokens);
                         } else {
                             formikBag.setErrors(data.errors);
                         }
@@ -176,4 +176,9 @@ const Signup = (props) => {
 
 };
 
-export default Signup;
+export default connect(
+    // mapStateToProps
+    null,
+    // mapDispatchToProps
+    { onLogin }
+)(Signup);

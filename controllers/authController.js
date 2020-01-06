@@ -1,6 +1,8 @@
 const db = require("../models");
 const jwt = require('jsonwebtoken');
-var bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
+const randomstring = require("randomstring");
+
 
 // Defining methods for the authController
 module.exports = {
@@ -11,27 +13,32 @@ module.exports = {
       if (preExistingUser) {
         res.status(200).json({
           success: false,
-          errors: {username: 'Username already exists'}
+          errors: { username: 'Username already exists' }
         });
         return;
       }
-      
+
       preExistingUser = await db.User.findOne({ email: req.body.email });
       if (preExistingUser) {
         res.status(200).json({
           success: false,
-          errors: {email: 'Email already exists'}
+          errors: { email: 'Email already exists' }
         });
         return;
       }
 
       req.body.passwordHash = await bcrypt.hash(req.body.password, parseInt(process.env.PASSWORD_SALT_ROUNDS, 10));
-      const newUser = await db.User.create(req.body);
+      const newUser = await db.User.create(req.body),
+        tokens = makeJwts(newUser);
+
+      await saveRefreshToken(tokens.refresh, newUser);
+
       res.json({
         success: true,
-        jwt: makeJWT(newUser)
+        tokens
       })
     } catch (error) {
+      console.log(error);
       respondWithServerError(res, error);
     }
 
@@ -43,7 +50,7 @@ module.exports = {
       if (!user) {
         res.status(200).json({
           success: false,
-          errors: {username: 'User not found'}
+          errors: { username: 'User not found' }
         });
         return;
       }
@@ -51,23 +58,75 @@ module.exports = {
       const match = await bcrypt.compare(req.body.password, user.passwordHash);
 
       if (match) {
+        const tokens = makeJwts(user);
+
+        await saveRefreshToken(tokens.refresh, user);
+
         res.json({
           success: true,
-          jwt: makeJWT(user)
+          tokens
         })
       } else {
         res.status(200).json({
           sucess: false,
-          errors: {password: 'Password is not valid'}
+          errors: { password: 'Password is not valid' }
         });
       }
 
     } catch (error) {
+      console.log(error);
+      respondWithServerError(res, error);
+    }
+  },
+
+  refresh: async function (req, res) {
+    try {
+
+      let decodedRefreshToken;
+      try {
+        decodedRefreshToken = jwt.verify(req.body.token, process.env.REFRESH_TOKEN_SECRET, {
+          issuer: 'readinglist-api',
+          audience: 'readinglist-react-gui'
+        });
+      } catch (error) {
+        console.log(error);
+        res.status(200).json({
+          success: false,
+          errors: { token: 'Refresh token not valid.'}
+        });
+        return;
+      }
+
+      const token = await db.Token.findOne({ token: decodedRefreshToken.sub, purpose: 'REFRESH' });
+      if (!token) {
+        res.status(200).json({
+          success: false,
+          errors: { token: 'Refresh token not found on server.' }
+        });
+        return;
+      }
+
+      const user = await db.User.findById(token.user),
+        tokens = makeJwts(user);
+
+      await saveRefreshToken(tokens.refresh, user);
+
+      res.json({
+        success: true,
+        tokens
+      })
+
+    } catch (error) {
+      console.log(error);
       respondWithServerError(res, error);
     }
   }
 };
 
+function saveRefreshToken(token, user) {
+  const { sub, exp } = jwt.decode(token);
+  return db.Token.create({ token: sub, purpose: 'REFRESH', expiresAt: exp * 1000, user: user._id });
+}
 
 function respondWithServerError(res, error) {
   res.status(500).json({
@@ -76,18 +135,34 @@ function respondWithServerError(res, error) {
   });
 }
 
-function makeJWT(user) {
-  return jwt.sign(
+function makeJwts(dbUser) {
+  const user = jwt.sign(
     {
-      firstName: user.firstName,
-      role: user.role
+      firstName: dbUser.firstName,
+      role: dbUser.role
     },
-    process.env.TOKEN_SECRET,
+    process.env.AUTH_TOKEN_SECRET,
     {
-      expiresIn: '1h',
-      subject: user._id.toString(),
+      expiresIn: process.env.AUTH_TOKEN_DURATION,
+      subject: dbUser._id.toString(),
       issuer: 'readinglist-api',
       audience: 'readinglist-react-gui'
     }
   );
+
+  const refresh = jwt.sign(
+    {},
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: process.env.REFRESH_TOKEN_DURATION,
+      subject: randomstring.generate(),
+      issuer: 'readinglist-api',
+      audience: 'readinglist-react-gui'
+    }
+  );
+
+  return {
+    user,
+    refresh
+  };
 }

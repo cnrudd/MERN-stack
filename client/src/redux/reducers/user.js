@@ -12,15 +12,20 @@ import { LOGIN, LOGOUT } from "../actionTypes";
 export default function (state = initialState, action) {
     switch (action.type) {
         case LOGIN: {
-            new JotBrowser('jwt', action.payload.jwt);
+            new JotBrowser('jwt', action.payload.tokens.user);
+            new JotBrowser('refreshJwt', action.payload.tokens.refresh);
             return {
                 ...state,
                 details: setUserDetails()
             };
         }
         case LOGOUT: {
+            // remove all tokens from local storage
             const jot = new JotBrowser('jwt');
             if (jot.getToken()) jot.eject();
+            const refreshJot = new JotBrowser('refreshJwt');
+            if (refreshJot.getToken()) refreshJot.eject();
+
             return {
                 ...state,
                 details: setUserDetails()

@@ -6,7 +6,7 @@ const db = require("../models");
 
 var opts = {}
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = process.env.TOKEN_SECRET;
+opts.secretOrKey = process.env.AUTH_TOKEN_SECRET;
 opts.issuer = 'readinglist-api';
 opts.audience = 'readinglist-react-gui';
 
