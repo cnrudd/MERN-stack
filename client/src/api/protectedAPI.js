@@ -50,11 +50,11 @@ axiosP.interceptors.request.use(
 );
 
 function getAuthHeaderAsync() {
-    const jot = new JotBrowser('jwt');
+    const accessJot = new JotBrowser('JWT_ACCESS');
 
-    if (jot.getToken() && jot.valid()) return Promise.resolve(makeAuthHeader(jot));
+    if (accessJot.getToken() && accessJot.valid()) return Promise.resolve(makeAuthHeader(accessJot));
 
-    const refreshJot = new JotBrowser('refreshJwt');
+    const refreshJot = new JotBrowser('JWT_REFRESH');
 
     if (!refreshJot.getToken()) return Promise.reject('Refresh token not found on client.');
     if (!refreshJot.valid()) return Promise.reject('Refresh token not valid on client.');
@@ -64,9 +64,9 @@ function getAuthHeaderAsync() {
         .then(data => {
             if (data.success) {
                 // save new tokens in localstorage
-                new JotBrowser('refreshJwt', data.tokens.refresh);
-                const jot = new JotBrowser('jwt', data.tokens.user);
-                return makeAuthHeader(jot);
+                new JotBrowser('JWT_REFRESH', data.tokens.refresh);
+                const accessJot = new JotBrowser('JWT_ACCESS', data.tokens.access);
+                return makeAuthHeader(accessJot);
             } else {
                 return Promise.reject(data.errors.token);
             }

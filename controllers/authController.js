@@ -29,13 +29,13 @@ module.exports = {
 
       req.body.passwordHash = await bcrypt.hash(req.body.password, parseInt(process.env.PASSWORD_SALT_ROUNDS, 10));
       const newUser = await db.User.create(req.body),
-        tokens = makeJwts(newUser);
+        jwts = makeJwts(newUser);
 
-      await saveRefreshToken(tokens.refresh, newUser);
+      await saveRefreshToken(jwts.refresh, newUser);
 
       res.json({
         success: true,
-        tokens
+        tokens: jwts
       })
     } catch (error) {
       console.log(error);
@@ -58,13 +58,13 @@ module.exports = {
       const match = await bcrypt.compare(req.body.password, user.passwordHash);
 
       if (match) {
-        const tokens = makeJwts(user);
+        const jwts = makeJwts(user);
 
-        await saveRefreshToken(tokens.refresh, user);
+        await saveRefreshToken(jwts.refresh, user);
 
         res.json({
           success: true,
-          tokens
+          tokens: jwts
         })
       } else {
         res.status(200).json({
@@ -97,8 +97,8 @@ module.exports = {
         return;
       }
 
-      const token = await db.Token.findOne({ token: decodedRefreshToken.sub, purpose: 'REFRESH' });
-      if (!token) {
+      const refreshToken = await db.Token.findOne({ token: decodedRefreshToken.sub, purpose: 'REFRESH' });
+      if (!refreshToken) {
         res.status(200).json({
           success: false,
           errors: { token: 'Refresh token not found on server.' }
@@ -106,14 +106,14 @@ module.exports = {
         return;
       }
 
-      const user = await db.User.findById(token.user),
-        tokens = makeJwts(user);
+      const user = await db.User.findById(refreshToken.user),
+        jwts = makeJwts(user);
 
-      await saveRefreshToken(tokens.refresh, user);
+      await saveRefreshToken(jwts.refresh, user);
 
       res.json({
         success: true,
-        tokens
+        tokens: jwts
       })
 
     } catch (error) {
@@ -135,16 +135,16 @@ function respondWithServerError(res, error) {
   });
 }
 
-function makeJwts(dbUser) {
-  const user = jwt.sign(
+function makeJwts(user) {
+  const access = jwt.sign(
     {
-      firstName: dbUser.firstName,
-      role: dbUser.role
+      firstName: user.firstName,
+      role: user.role
     },
-    process.env.AUTH_TOKEN_SECRET,
+    process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: process.env.AUTH_TOKEN_DURATION,
-      subject: dbUser._id.toString(),
+      expiresIn: process.env.ACCESS_TOKEN_DURATION,
+      subject: user._id.toString(),
       issuer: 'readinglist-api',
       audience: 'readinglist-react-gui'
     }
@@ -162,7 +162,7 @@ function makeJwts(dbUser) {
   );
 
   return {
-    user,
+    access,
     refresh
   };
 }

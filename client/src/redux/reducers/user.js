@@ -12,8 +12,8 @@ import { LOGIN, LOGOUT } from "../actionTypes";
 export default function (state = initialState, action) {
     switch (action.type) {
         case LOGIN: {
-            new JotBrowser('jwt', action.payload.tokens.user);
-            new JotBrowser('refreshJwt', action.payload.tokens.refresh);
+            new JotBrowser('JWT_ACCESS', action.payload.tokens.access);
+            new JotBrowser('JWT_REFRESH', action.payload.tokens.refresh);
             return {
                 ...state,
                 details: setUserDetails()
@@ -21,9 +21,9 @@ export default function (state = initialState, action) {
         }
         case LOGOUT: {
             // remove all tokens from local storage
-            const jot = new JotBrowser('jwt');
-            if (jot.getToken()) jot.eject();
-            const refreshJot = new JotBrowser('refreshJwt');
+            const accessJot = new JotBrowser('JWT_ACCESS');
+            if (accessJot.getToken()) accessJot.eject();
+            const refreshJot = new JotBrowser('JWT_REFRESH');
             if (refreshJot.getToken()) refreshJot.eject();
 
             return {
@@ -40,12 +40,12 @@ export default function (state = initialState, action) {
 }
 
 const setUserDetails = () => {
-    const jot = new JotBrowser('jwt');
-    return jot.getToken() ?
+    const accessJot = new JotBrowser('JWT_ACCESS');
+    return accessJot.getToken() ?
         {
-            firstName: jot.getClaim('firstName'),
-            role: jot.getClaim('role'),
-            id: jot.getClaim('sub')
+            firstName: accessJot.getClaim('firstName'),
+            role: accessJot.getClaim('role'),
+            id: accessJot.getClaim('sub')
         } :
         null;
 }

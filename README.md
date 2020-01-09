@@ -13,7 +13,7 @@ The app currently supports:
 * Login
 * Logout
 * Auto log out if refresh token is expired when request to protected URL is made
-* Auto creation of new auth token if refresh token is still valid (so if a user is using the app they will not be logged out if they have not made a protected api call within `AUTH_TOKEN_DURATION`)
+* Auto creation of new auth token if refresh token is still valid (so if a user is using the app they will not be logged out if they have not made a protected api call within `ACCESS_TOKEN_DURATION`)
 
 Missing from app:
 * Auto logout due to inactivity
@@ -23,12 +23,14 @@ Missing from app:
 * Delete account page
 
 
-App can be run locally by running (from project root directory):
+App can be run locally by:
 
-```
-npm i
-npm start
-```
+1. renaming file `.env_sample` to `.env`
+2. From project root directory, run:
+   1. `npm i`
+   2. `npm run seed` (to seed the mongo DB - make sure mongo is running)
+   3.  `npm start`
+
 
 or can be used on heroku at:
 https://booklist-cnr.herokuapp.com/
@@ -40,12 +42,6 @@ username: `demo1`
 
 password: `12345678`
 
-
-When running locally, user and book data can be seeded by running:
-
-```
-npm run seed
-```
 
 ## Dependency Doc Links
 

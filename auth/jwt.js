@@ -1,18 +1,15 @@
-const passport = require('passport');
-var JwtStrategy = require('passport-jwt').Strategy,
+const passport = require('passport'),
+    JwtStrategy = require('passport-jwt').Strategy,
     ExtractJwt = require('passport-jwt').ExtractJwt;
 
 const db = require("../models");
 
-var opts = {}
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = process.env.AUTH_TOKEN_SECRET;
-opts.issuer = 'readinglist-api';
-opts.audience = 'readinglist-react-gui';
-
-module.exports = function () {
-    passport.use(new JwtStrategy(opts, verifyCallback));
-}
+const opts = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: process.env.ACCESS_TOKEN_SECRET,
+    issuer: 'readinglist-api',
+    audience: 'readinglist-react-gui'
+};
 
 async function verifyCallback(jwt_payload, done) {
     let user, err;
@@ -31,4 +28,8 @@ async function verifyCallback(jwt_payload, done) {
         return done(null, false);
         // or you could create a new account
     }
+}
+
+module.exports = function () {
+    passport.use(new JwtStrategy(opts, verifyCallback));
 }
