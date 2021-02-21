@@ -1,7 +1,9 @@
 {
-  "name": "user-server",
+  "name": "mern-stack-server",
   "version": "1.0.0",
-  "description": "",
+  "author": "Colin Rudd",
+  "description": "Mongo+Express Server with JWT authentication for username+password login.",
+  "license": "ISC",
   "main": "server.js",
   "scripts": {
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
@@ -12,12 +14,6 @@
     "install": "cd client && npm install",
     "build": "cd client && npm run build",
     "heroku-postbuild": "npm run build && npm run seed"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "concurrently": "^6.0.0",
-    "nodemon": "^2.0.4"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -30,5 +26,9 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "randomstring": "^1.1.5"
+  },
+  "devDependencies": {
+    "concurrently": "^6.0.0",
+    "nodemon": "^2.0.4"
   }
 }

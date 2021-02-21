@@ -22,28 +22,24 @@ Missing from app:
 * Profile Picture/avatar upload
 * Delete account page
 
+## PREREQUISITES
+1. install mongo db
+2. install nodejs & npm
 
-App can be run locally by:
-
+## HOW TO RUN ON YOUR LOCAL MACHINE
 1. renaming file `.env_sample` to `.env`
 2. From project root directory, run:
    1. `npm i`
    2. `npm run seed` (to seed the mongo DB - make sure mongo is running)
-   3.  `npm start`
+   3. `npm start`
 
 
-or can be used on heroku at:
-https://booklist-cnr.herokuapp.com/
-
-Signup with your own account on the sign up page: https://booklist-cnr.herokuapp.com/signup
-or login with
-
+### Login with
 username: `demo1`   
-
 password: `12345678`
 
 
-## Dependency Doc Links
+## DEPENDENCY DOC LINKS
 
 ### Client
 * SPA Framework

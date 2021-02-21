@@ -1,8 +1,16 @@
 {
-  "name": "user-client",
-  "version": "0.1.0",
-  "private": true,
+  "name": "mern-stack-client",
+  "version": "1.0.0",
+  "author": "Colin Rudd",
+  "description": "React + Bootstrap SPA GUI client with JWT authentication for username+password login.",
+  "license": "ISC",
   "proxy": "http://localhost:3001/",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "axios": "^0.21.1",
     "formik": "^2.2.6",
@@ -16,19 +24,13 @@
     "redux": "^4.0.5",
     "yup": "^0.32.9"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+  "devDependencies": {
+    "react-devtools": "^4.10.1"
   },
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ],
-  "devDependencies": {
-    "react-devtools": "^4.10.1"
-  }
+  ]
 }
