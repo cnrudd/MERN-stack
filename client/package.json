@@ -2,7 +2,7 @@
   "name": "mern-stack-client",
   "version": "1.0.0",
   "author": "Colin Rudd",
-  "description": "React + Bootstrap SPA GUI client with JWT authentication for username+password login.",
+  "description": "React + Redux + Bootstrap SPA GUI client with JWT authentication for username+password login.",
   "license": "ISC",
   "proxy": "http://localhost:3001/",
   "scripts": {
